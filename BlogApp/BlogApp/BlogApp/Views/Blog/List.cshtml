@@ -1,0 +1,42 @@
+﻿
+<table id="dataTable" border="1" class="table" style="margin-top:20px">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Published Date</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function fetchDataAndUpdateUI() {
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("all","api/blogapi")',
+                type: 'get',
+                success: function (result) {
+                    updateUIWithData(result)
+                },
+                error: function (xhr, status, error) {
+
+                }
+            });
+        });
+    }
+
+    function updateUIWithData(data) {
+        $("#dataTable tbody").empty();
+        $.each(data, function (index, item) {
+            var rows = `<tr>
+            <td><a href = '/blog/GetBlog?id=${item.Id}'>${item.Title}</a></td>
+            <td>${item.Author}</td>
+            <td>${item.PublishedDate ?? ''}</td>
+            </tr>`;
+            $("#dataTable tbody").append(rows);
+        });
+    }
+
+    fetchDataAndUpdateUI();
+</script>

@@ -1,0 +1,117 @@
+﻿CREATE DATABASE BlogApp;
+
+Go
+Use BlogApp;
+
+CREATE TABLE Posts
+(
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Title NVARCHAR(MAX),
+    Author INT,
+    Content NVARCHAR(MAX),
+    Status NVARCHAR(30),
+    Image VARBINARY(MAX),
+    Video VARBINARY(MAX),
+    CreationDate DATETIME,
+    PublishedDate DATETIME
+);
+
+CREATE TABLE Users
+(
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(MAX),
+    Email NVARCHAR(MAX) COLLATE Latin1_General_CS_AS,
+    Password NVARCHAR(MAX) COLLATE Latin1_General_CS_AS
+);
+
+Go
+CREATE PROCEDURE UpsertPost
+    @Id INT = 0,
+    @Title NVARCHAR(MAX),
+    @Author INT,
+    @Content NVARCHAR(MAX) = NULL,
+    @Status NVARCHAR(20),
+    @Image VARBINARY(MAX) = NULL,
+    @Video VARBINARY(MAX) = NULL,
+    @CreationDate DATETIME = NULL,
+    @PublishedDate DATETIME = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @Id > 0
+    BEGIN
+        -- Update existing record
+        UPDATE Posts
+        SET
+            Title = @Title,
+            Content = @Content,
+            Status = @Status,
+            Image = @Image,
+            Video = @Video,
+            PublishedDate = @PublishedDate
+        WHERE Id = @Id;
+    END
+    ELSE
+    BEGIN
+        INSERT INTO Posts (Title, Author, Content, Status, Image, Video, CreationDate, PublishedDate)
+        VALUES (@Title, @Author, @Content, @Status, @Image, @Video, @CreationDate, @PublishedDate);
+    END
+END;
+
+
+Go
+CREATE PROCEDURE CreateUser
+    @Name NVARCHAR(MAX),
+    @Email NVARCHAR(MAX),
+    @Password NVARCHAR(MAX)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO Users (Name, Email, Password)
+    VALUES (@Name, @Email, @Password);
+END;
+
+
+Go
+CREATE PROCEDURE CheckUser
+    @Email NVARCHAR(255),
+    @Password NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT * FROM USERS WHERE Email = @Email and Password = @Password
+END;
+
+GO
+CREATE PROCEDURE GetBlogsList
+    @AuthorId INT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF @AuthorId IS NOT NULL
+	BEGIN
+	    SELECT p.Id,Title,p.Status,u.name AS Author,p.CreationDate,p.PublishedDate FROM Posts p
+	    LEFT JOIN Users u ON u.id = p.Author
+	    WHERE u.id = @AuthorId
+	END
+
+	ELSE
+	BEGIN
+	    SELECT p.Id,Title,p.Status,u.name AS Author,p.CreationDate,p.PublishedDate FROM Posts p
+	    LEFT JOIN Users u ON u.id = p.Author
+	    WHERE p.Status = 'Published'
+	END
+END;
+
+GO
+CREATE PROCEDURE GetBlogById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+	    SELECT p.Id,Title,p.Status,u.name AS Author,p.Content,p.Image,p.Video,p.CreationDate,p.PublishedDate FROM Posts p
+	    LEFT JOIN Users u ON u.id = p.Author	
+        WHERE p.Id = @Id
+END;

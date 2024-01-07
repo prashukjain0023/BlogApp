@@ -1,0 +1,57 @@
+﻿
+<div style="margin-top:20px">
+
+
+    <button>
+        @Html.ActionLink("Create", "Create", "UserBlog")
+    </button>
+
+
+    <table id="dataTable" border="1" class="table" style="margin-top:20px">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Creation Date</th>
+                <th>Published Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+<script>
+    function fetchDataAndUpdateUI() {
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("List","api/UserBlogApi")',
+                type: 'get',
+                success: function (result) {
+                    updateUIWithData(result)
+                },
+                error: function (xhr, status, error) {
+
+                }
+            });
+        });
+    }
+
+    function updateUIWithData(data) {
+
+        $("#dataTable tbody").empty();
+        $.each(data, function (index, item) {
+
+            var rows = `<tr>
+            <td><a href = '/UserBlog/GetBlog?id=${item.Id}'>${item.Title}</a></td>
+            <td>${item.Status ?? ''}</td>
+            <td>${item.CreationDate ?? ''}</td>
+            <td>${item.PublishedDate ?? ''}</td>
+            <td><a href = '/UserBlog/Edit?id=${item.Id}'>Edit</a</td>
+            </tr>`;
+            $("#dataTable tbody").append(rows);
+        });
+    }
+
+    fetchDataAndUpdateUI();
+</script>
