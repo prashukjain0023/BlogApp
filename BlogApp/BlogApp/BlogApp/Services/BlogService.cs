@@ -11,9 +11,9 @@ namespace BlogApp.Services
     {
         public readonly IBlogRepository _blogRepository;
 
-        public BlogService()
+        public BlogService(IBlogRepository blogRepository)
         {
-            _blogRepository = new BlogRepository();
+            _blogRepository = blogRepository;
         }
         public List<BlogsModel> GetBlogsList(int? userId = null)
         {

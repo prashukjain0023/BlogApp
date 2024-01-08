@@ -1,4 +1,5 @@
 ﻿using BlogApp.Models;
+using BlogApp.Repositories;
 using BlogApp.Services;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace BlogApp.Controllers
 
         public UserBlogController()
         {
-            _blogService = new BlogService();
+            _blogService = new BlogService(new BlogRepository());
+
         }
         public ActionResult List()
         {
@@ -37,14 +39,8 @@ namespace BlogApp.Controllers
 
         public ActionResult GetBlog(int id)
         {
-            Post p = new Post()
-            {
-                Title = "name",
-                Author = 2,
-                PublishedDate = DateTime.Now,
-                Content = "blogcontent"
-            };
-            return View(p);
+            var blog = _blogService.GetBlogById(id);
+            return View(blog);
         }
     }
 }

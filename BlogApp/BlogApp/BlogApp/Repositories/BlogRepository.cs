@@ -73,9 +73,7 @@ namespace BlogApp.Repositories
                                 Title = reader["Title"].ToString(),
                                 Author = reader["Author"].ToString(),
                                 Status = reader["Status"].ToString(),
-                                Content = reader["Content"].ToString(),
-                                Image = reader["Image"] as byte[],
-                                Video = reader["Video"] as byte[]
+                                Content = reader["Content"].ToString()
                             };
 
                             if (reader["PublishedDate"] != DBNull.Value)
@@ -103,11 +101,9 @@ namespace BlogApp.Repositories
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Id", model.Id);
                     command.Parameters.AddWithValue("@Title", model.Title);
-                    command.Parameters.AddWithValue("@Author", 1);
+                    command.Parameters.AddWithValue("@Author", model.AuthorId);
                     command.Parameters.AddWithValue("@Content", model.Content);
                     command.Parameters.AddWithValue("@Status", model.Status);
-                    command.Parameters.AddWithValue("@Image", model.Image);
-                    command.Parameters.AddWithValue("@Video", model.Video);
 
                     if (model.Id == 0)
                     {

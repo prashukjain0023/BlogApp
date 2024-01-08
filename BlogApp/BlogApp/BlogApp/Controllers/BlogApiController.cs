@@ -17,9 +17,9 @@ namespace BlogApp.Controllers
     {
         private readonly IBlogService _blogService;
 
-        public BlogApiController()
+        public BlogApiController(IBlogService blogService)
         {
-            _blogService = new BlogService();
+            _blogService = blogService;
         }
        
         [HttpGet]

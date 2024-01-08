@@ -10,8 +10,6 @@ CREATE TABLE Posts
     Author INT,
     Content NVARCHAR(MAX),
     Status NVARCHAR(30),
-    Image VARBINARY(MAX),
-    Video VARBINARY(MAX),
     CreationDate DATETIME,
     PublishedDate DATETIME
 );
@@ -31,8 +29,6 @@ CREATE PROCEDURE UpsertPost
     @Author INT,
     @Content NVARCHAR(MAX) = NULL,
     @Status NVARCHAR(20),
-    @Image VARBINARY(MAX) = NULL,
-    @Video VARBINARY(MAX) = NULL,
     @CreationDate DATETIME = NULL,
     @PublishedDate DATETIME = NULL
 AS
@@ -47,15 +43,13 @@ BEGIN
             Title = @Title,
             Content = @Content,
             Status = @Status,
-            Image = @Image,
-            Video = @Video,
             PublishedDate = @PublishedDate
         WHERE Id = @Id;
     END
     ELSE
     BEGIN
-        INSERT INTO Posts (Title, Author, Content, Status, Image, Video, CreationDate, PublishedDate)
-        VALUES (@Title, @Author, @Content, @Status, @Image, @Video, @CreationDate, @PublishedDate);
+        INSERT INTO Posts (Title, Author, Content, Status,CreationDate, PublishedDate)
+        VALUES (@Title, @Author, @Content, @Status,@CreationDate, @PublishedDate);
     END
 END;
 
@@ -111,7 +105,7 @@ CREATE PROCEDURE GetBlogById
 AS
 BEGIN
     SET NOCOUNT ON;
-	    SELECT p.Id,Title,p.Status,u.name AS Author,p.Content,p.Image,p.Video,p.CreationDate,p.PublishedDate FROM Posts p
+	    SELECT p.Id,Title,p.Status,u.name AS Author,p.Content,p.CreationDate,p.PublishedDate FROM Posts p
 	    LEFT JOIN Users u ON u.id = p.Author	
         WHERE p.Id = @Id
 END;

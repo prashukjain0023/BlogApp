@@ -16,9 +16,11 @@ namespace BlogApp.Controllers
     public class AccountApiController : ApiController
     {
         private readonly IUserService _userService;
-        public AccountApiController()
+        private CurrentUserContext _currentUserContext;
+        public AccountApiController(IUserService userService, CurrentUserContext currentUserContext)
         {
-            _userService = new UserService();
+            _userService = userService;            _currentUserContext = currentUserContext;
+
         }
 
         [HttpPost]
@@ -36,7 +38,8 @@ namespace BlogApp.Controllers
             var user = _userService.ValidUser(model);
             if (user != null)
             {
-                FormsAuthentication.SetAuthCookie(user.Name, false);
+                FormsAuthentication.SetAuthCookie(user.Name,false);
+                _currentUserContext.SetUser(user);
                 return Ok();
             }
             return BadRequest();

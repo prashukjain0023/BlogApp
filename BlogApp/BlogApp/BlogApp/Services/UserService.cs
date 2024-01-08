@@ -10,9 +10,9 @@ namespace BlogApp.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService()
+        public UserService(IUserRepository userRepository)
         {
-            _userRepository = new UserRepository();
+            _userRepository = userRepository;
         }
 
         public void CreateUser(User u)

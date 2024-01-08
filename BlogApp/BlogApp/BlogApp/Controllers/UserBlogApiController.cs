@@ -10,23 +10,27 @@ using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using RouteAttribute = System.Web.Http.RouteAttribute;
 using AuthorizeAttribute = System.Web.Mvc.AuthorizeAttribute;
 using BlogApp.Services;
+using System.Security.Claims;
 
 namespace BlogApp.Controllers
 {
     public class UserBlogApiController : ApiController
     {
         private readonly IBlogService _blogService;
+        private CurrentUserContext _currentUserContext;
 
-        public UserBlogApiController()
+        public UserBlogApiController(IBlogService blogService, CurrentUserContext currentUserContext)
         {
-            _blogService = new BlogService();
+            _blogService = blogService;            _currentUserContext = currentUserContext;
+
         }
 
         [HttpPost]
         [Route("api/userblogapi/process")]
         [Authorize]
-        public IHttpActionResult Process(BlogsModel model)
+        public IHttpActionResult Process([FromBody] BlogsModel model)
         {
+            model.AuthorId = _currentUserContext.Id;
             _blogService.ProcessBlog(model);
             return Ok();
         }
@@ -37,8 +41,7 @@ namespace BlogApp.Controllers
         [Authorize]
         public IHttpActionResult GetList()
         {
-            //int? userId = HttpContext.Current.Session["UserId"] as int?;
-            var blogsList = _blogService.GetBlogsList(1);
+            var blogsList = _blogService.GetBlogsList(_currentUserContext.Id);
             return Ok(blogsList);
         }
     }
