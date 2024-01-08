@@ -16,3 +16,4 @@ Improvements
 6. reuse the code
 7. Checking if the user already exists with the same name/email while registering new user
 8. Image and Video Support
+9. Input Validation
