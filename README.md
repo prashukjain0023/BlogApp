@@ -14,3 +14,4 @@ Improvents
 4. Dependency Injection
 5. db normalization
 6. reuse the code
+7. Checking of user already exists with same name/email
